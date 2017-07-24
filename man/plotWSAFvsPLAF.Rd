@@ -4,7 +4,8 @@
 \alias{plotWSAFvsPLAF}
 \title{Plot WSAF vs PLAF}
 \usage{
-plotWSAFvsPLAF(plaf, obsWSAF, expWSAF = c(), title = "WSAF vs PLAF")
+plotWSAFvsPLAF(plaf, obsWSAF, expWSAF = c(), potentialOutliers = c(),
+  title = "WSAF vs PLAF", cex.lab = 1, cex.main = 1, cex.axis = 1)
 }
 \arguments{
 \item{plaf}{Numeric array of population level allele frequency.}
@@ -13,7 +14,15 @@ plotWSAFvsPLAF(plaf, obsWSAF, expWSAF = c(), title = "WSAF vs PLAF")
 
 \item{expWSAF}{Numeric array of expected WSAF from model.}
 
+\item{potentialOutliers}{Index of potential outliers.}
+
 \item{title}{Figure title, "WSAF vs PLAF" by default}
+
+\item{cex.lab}{Label size.}
+
+\item{cex.main}{Title size.}
+
+\item{cex.axis}{Axis text size.}
 }
 \description{
 Plot allele frequencies within sample against population level.
@@ -37,4 +46,3 @@ plaf = extractPLAF(plafFile)
 plotWSAFvsPLAF(plaf, obsWSAF)
 
 }
-

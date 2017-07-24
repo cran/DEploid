@@ -2,7 +2,9 @@
  * dEploid is used for deconvoluting Plasmodium falciparum genome from
  * mix-infected patient sample.
  *
- * Copyright (C) 2016, Sha (Joe) Zhu, Jacob Almagro and Prof. Gil McVean
+ * Copyright (C) 2016-2017 University of Oxford
+ *
+ * Author: Sha (Joe) Zhu
  *
  * This file is part of dEploid.
  *
@@ -24,20 +26,17 @@
 #include "dEploidIO.hpp"
 #include "mcmc.hpp"
 
-void DEploidIO::write( McmcSample * mcmcSample, Panel * panel ){
-    this->writeProp( mcmcSample );
-    this->writeLLK( mcmcSample );
-    this->writeHap( mcmcSample );
-    this->writeVcf( mcmcSample );
+
+void DEploidIO::wrapUp(){
     this->writeRecombProb( panel );
 
     // Get End time before writing the log
     this->getTime(false);
 
-    this->writeLog ( mcmcSample, &std::cout );
+    this->writeLog (&std::cout);
 
     ofstreamExportTmp.open( strExportLog.c_str(), ios::out | ios::app | ios::binary );
-    this->writeLog ( mcmcSample, &ofstreamExportTmp );
+    this->writeLog (&ofstreamExportTmp);
     ofstreamExportTmp.close();
 }
 
@@ -67,10 +66,17 @@ void DEploidIO::writeRecombProb ( Panel * panel ){
 
 
 
-void DEploidIO::writeLog ( McmcSample * mcmcSample, ostream * writeTo ){
-    (*writeTo) << "#########################################\n";
+void DEploidIO::writeLog ( ostream * writeTo ){
+    size_t nHash = 30 + string(VERSION).size();
+    for ( size_t i = 0; i < nHash; i++){
+        (*writeTo) << "#";
+    }
+    (*writeTo) << "\n";
     (*writeTo) << "#        dEploid "<< setw(10) << VERSION << " log        #\n";
-    (*writeTo) << "#########################################\n";
+    for ( size_t i = 0; i < nHash; i++){
+        (*writeTo) << "#";
+    }
+    (*writeTo) << "\n";
     (*writeTo) << "Program was compiled on: " << compileTime_ << endl;
     (*writeTo) << "dEploid version: " << dEploidGitVersion_ << endl;
     (*writeTo) << "\n";
@@ -82,20 +88,27 @@ void DEploidIO::writeLog ( McmcSample * mcmcSample, ostream * writeTo ){
     if ( altFileName_.size()>0) (*writeTo) << setw(12) << "ALT count: " << altFileName_    << "\n";
     if ( excludeSites() ){ (*writeTo) << setw(12) << "Exclude: " << excludeFileName_    << "\n"; }
     (*writeTo) << "\n";
-    (*writeTo) << "MCMC parameters: "<< "\n";
-    (*writeTo) << setw(19) << " MCMC burn: " << mcmcBurn_ << "\n";
-    (*writeTo) << setw(19) << " MCMC sample: " << nMcmcSample_ << "\n";
-    (*writeTo) << setw(19) << " MCMC sample rate: " << mcmcMachineryRate_ <<"\n";
-    (*writeTo) << setw(19) << " Random seed: " << this->randomSeed() << "\n";
-    (*writeTo) << setw(19) << " Update Prop: "   << (this->doUpdateProp()  ? "YES":"NO") << "\n";
-    (*writeTo) << setw(19) << " Update Single: " << (this->doUpdateSingle()? "YES":"NO") << "\n";
-    (*writeTo) << setw(19) << " Update Pair: "   << (this->doUpdatePair()  ? "YES":"NO") << "\n";
-    (*writeTo) << "\n";
+    if ( this->doPainting() == false ) {
+        (*writeTo) << "MCMC parameters: "<< "\n";
+        (*writeTo) << setw(19) << " MCMC burn: " << mcmcBurn_ << "\n";
+        (*writeTo) << setw(19) << " MCMC sample: " << nMcmcSample_ << "\n";
+        (*writeTo) << setw(19) << " MCMC sample rate: " << mcmcMachineryRate_ <<"\n";
+        (*writeTo) << setw(19) << " Random seed: " << this->randomSeed() << "\n";
+        if (this->useIBD()){
+            (*writeTo) << setw(19) << "  IBD Method used: YES" << "\n";
+        }
+        (*writeTo) << setw(19) << " Update Prop: "   << (this->doUpdateProp()  ? "YES":"NO") << "\n";
+        (*writeTo) << setw(19) << " Update Single: " << (this->doUpdateSingle()? "YES":"NO") << "\n";
+        (*writeTo) << setw(19) << " Update Pair: "   << (this->doUpdatePair()  ? "YES":"NO") << "\n";
+        (*writeTo) << "\n";
+    }
     (*writeTo) << "Other parameters:"<< "\n";
     if ( forbidCopyFromSame_ ){ (*writeTo) << " Update pair haplotypes move forbid copying from the same strain!!! \n"; }
     (*writeTo) << setw(20) << " Miss copy prob: "   << this->missCopyProb_ << "\n";
     (*writeTo) << setw(20) << " Avrg Cent Morgan: " << this->averageCentimorganDistance_ << "\n";
-    (*writeTo) << setw(20) << " Ne: "               << this->Ne_ << "\n";
+    (*writeTo) << setw(20) << " G: "               << this->parameterG() << "\n";
+    (*writeTo) << setw(20) << " sigma: "               << this->parameterSigma() << "\n";
+    (*writeTo) << setw(20) << " ScalingFactor: "    << this->scalingFactor() << "\n";
     if ( this->initialPropWasGiven() ){
         (*writeTo) << setw(20) << " Initial prob: " ;
         for ( size_t i = 0; i < this->initialProp.size(); i++ ){
@@ -104,155 +117,109 @@ void DEploidIO::writeLog ( McmcSample * mcmcSample, ostream * writeTo ){
         }
     }
     (*writeTo) << "\n";
+    if ( this->doPainting() == false ) {
+        (*writeTo) << "MCMC diagnostic:"<< "\n";
+        (*writeTo) << setw(19) << " Accept_ratio: " << acceptRatio_ << "\n";
+        (*writeTo) << setw(19) << " Max_llks: " << maxLLKs_ << "\n";
+        (*writeTo) << setw(19) << " Mean_theta_llks: " << meanThetallks_ << "\n";
+        (*writeTo) << setw(19) << " Mean_llks: " << meanllks_ << "\n";
+        (*writeTo) << setw(19) << " Stdv_llks: " << stdvllks_ << "\n";
+        (*writeTo) << setw(19) << " DIC_by_Dtheta: " << dicByTheta_ << "\n";
+        (*writeTo) << setw(19) << " DIC_by_varD: " << dicByVar_ << "\n";
+        (*writeTo) << "\n";
+    }
     (*writeTo) << "Run time:\n";
     (*writeTo) << setw(14) << "Start at: "  << startingTime_  ;
     (*writeTo) << setw(14) << "End at: "    << endTime_  ;
     (*writeTo) << "\n";
     (*writeTo) << "Output saved to:\n";
-    (*writeTo) << setw(14) << "Likelihood: "  << strExportLLK  << "\n";
-    (*writeTo) << setw(14) << "Proportions: " << strExportProp << "\n";
-    (*writeTo) << setw(14) << "Haplotypes: "  << strExportHap  << "\n";
-    if ( doExportVcf() ) { (*writeTo) << setw(14) << "Vcf: "  << strExportVcf  << "\n"; }
+    if ( this->doPainting() ){
+        for ( size_t i = 0; i < kStrain(); i++ ){
+            (*writeTo) << "Posterior probability of strain " << i << ": "<< strExportSingleFwdProbPrefix << i <<endl;
+        }
+    } else {
+        (*writeTo) << setw(14) << "Likelihood: "  << strExportLLK  << "\n";
+        (*writeTo) << setw(14) << "Proportions: " << strExportProp << "\n";
+        (*writeTo) << setw(14) << "Haplotypes: "  << strExportHap  << "\n";
+        if ( doExportVcf() ) { (*writeTo) << setw(14) << "Vcf: "  << strExportVcf  << "\n"; }
+        if (this->useIBD()){
+            (*writeTo) << " IBD method output saved to:\n";
+            (*writeTo) << setw(14) << "Likelihood: "  << strIbdExportProp  << "\n";
+            (*writeTo) << setw(14) << "Proportions: " << strIbdExportProp << "\n";
+            (*writeTo) << setw(14) << "Haplotypes: "  << strIbdExportHap  << "\n";
+        }
+    }
     (*writeTo) << "\n";
-    (*writeTo) << "Proportions at the last iteration:\n";
-    for ( size_t ii = 0; ii < mcmcSample->proportion.back().size(); ii++){
-        (*writeTo) << setw(10) << mcmcSample->proportion.back()[ii];
-        (*writeTo) << ((ii < (mcmcSample->proportion.back().size()-1)) ? "\t" : "\n") ;
+    (*writeTo) << "Proportions:\n";
+    for ( size_t ii = 0; ii < this->filnalProp.size(); ii++){
+        (*writeTo) << setw(10) << this->filnalProp[ii];
+        (*writeTo) << ((ii < (this->filnalProp.size()-1)) ? "\t" : "\n") ;
     }
 
 }
 
 
-void DEploidIO::writeProp( McmcSample * mcmcSample){
-    ofstreamExportTmp.open( strExportProp.c_str(), ios::out | ios::app | ios::binary );
-    for ( size_t i = 0; i < mcmcSample->proportion.size(); i++){
-        for ( size_t ii = 0; ii < mcmcSample->proportion[i].size(); ii++){
-            ofstreamExportTmp << setw(10) << mcmcSample->proportion[i][ii];
-            ofstreamExportTmp << ((ii < (mcmcSample->proportion[i].size()-1)) ? "\t" : "\n") ;
-        }
-    }
-    ofstreamExportTmp.close();
-}
 
 
-void DEploidIO::writeLLK( McmcSample * mcmcSample){
-    ofstreamExportTmp.open( strExportLLK.c_str(), ios::out | ios::app | ios::binary );
-    for ( size_t i = 0; i < mcmcSample->sumLLKs.size(); i++){
-        ofstreamExportTmp << mcmcSample->moves[i] << "\t" << mcmcSample->sumLLKs[i] << endl;
-    }
-    ofstreamExportTmp.close();
-}
 
-
-void DEploidIO::writeHap( McmcSample * mcmcSample ){
-    ofstreamExportTmp.open( strExportHap.c_str(), ios::out | ios::app | ios::binary );
+void DEploidIO::writeEventCount(){
+    ofstreamExportTmp.open( strExportExtra.c_str(), ios::out | ios::app | ios::binary );
 
     // HEADER
-    ofstreamExportTmp << "CHROM" << "\t" << "POS" << "\t";;
-    for ( size_t ii = 0; ii < kStrain_; ii++){
-        ofstreamExportTmp << "h" << (ii+1) ;
-        ofstreamExportTmp << ((ii < (kStrain_-1)) ? "\t" : "\n") ;
-    }
+    ofstreamExportTmp << "CHROM" << "\t"
+                      << "POS" << "\t"
+                      << "IBDpathChangeAt" << "\t"
+                      << "finalIBDpathChangeAt" << "\t"
+
+                      << "siteOfTwoSwitchOne" << "\t"
+                      << "finalSiteOfTwoSwitchOne" << "\t"
+
+                      << "siteOfTwoMissCopyOne" << "\t"
+                      << "finalSiteOfTwoMissCopyOne" << "\t"
+
+                      << "siteOfTwoSwitchTwo" << "\t"
+                      << "finalSiteOfTwoSwitchTwo" << "\t"
+
+                      << "siteOfTwoMissCopyTwo" << "\t"
+                      << "finalSiteOfTwoMissCopyTwo" << "\t"
+
+                      << "siteOfOneSwitchOne" << "\t"
+                      << "finalSiteOfOneSwitchOne" << "\t"
+
+                      << "siteOfOneMissCopyOne" << "\t"
+                      << "finalSiteOfOneMissCopyOne" << endl;
 
     size_t siteIndex = 0;
     for ( size_t chromI = 0; chromI < chrom_.size(); chromI++ ){
         for ( size_t posI = 0; posI < position_[chromI].size(); posI++){
-            ofstreamExportTmp << chrom_[chromI] << "\t" << (int)position_[chromI][posI] << "\t";
-            for ( size_t ii = 0; ii < mcmcSample->hap[siteIndex].size(); ii++){
-                ofstreamExportTmp << mcmcSample->hap[siteIndex][ii];
-                ofstreamExportTmp << ((ii < (mcmcSample->hap[siteIndex].size()-1)) ? "\t" : "\n") ;
-            }
+            ofstreamExportTmp << chrom_[chromI] << "\t"
+                              << (int)position_[chromI][posI] << "\t"
+
+                              << this->IBDpathChangeAt[siteIndex] << "\t"
+                              << this->finalIBDpathChangeAt[siteIndex] << "\t"
+
+                              << this->siteOfTwoSwitchOne[siteIndex] << "\t"
+                              << this->finalSiteOfTwoSwitchOne[siteIndex] << "\t"
+
+                              << this->siteOfTwoMissCopyOne[siteIndex] << "\t"
+                              << this->finalSiteOfTwoMissCopyOne[siteIndex] << "\t"
+
+                              << this->siteOfTwoSwitchTwo[siteIndex] << "\t"
+                              << this->finalSiteOfTwoSwitchTwo[siteIndex] << "\t"
+
+                              << this->siteOfTwoMissCopyTwo[siteIndex] << "\t"
+                              << this->finalSiteOfTwoMissCopyTwo[siteIndex] << "\t"
+
+                              << this->siteOfOneSwitchOne[siteIndex] << "\t"
+                              << this->finalSiteOfOneSwitchOne[siteIndex] << "\t"
+
+                              << this->siteOfOneMissCopyOne[siteIndex] << "\t"
+                              << this->finalSiteOfOneMissCopyOne[siteIndex] << endl;
             siteIndex++;
         }
     }
 
-    assert ( siteIndex == mcmcSample->hap.size());
+    assert(siteIndex == this->IBDpathChangeAt.size());
     ofstreamExportTmp.close();
 }
 
-
-void DEploidIO::writeVcf( McmcSample * mcmcSample ){
-    if ( !doExportVcf() ) return;
-
-    ogzstream ogstreamExport;
-    ostream * writeTo;
-    if ( compressVcf() ){
-        ogstreamExport.open( strExportVcf.c_str(), ios::out );
-        writeTo = &ogstreamExport;
-    } else {
-        ofstreamExportTmp.open( strExportVcf.c_str(), ios::out | ios::app | ios::binary );
-        writeTo = &ofstreamExportTmp;
-    }
-
-    // VCF HEADER
-    if ( this->useVcf() ){
-        for ( auto const& headerLine: this->vcfReaderPtr_->headerLines){
-            (*writeTo) << headerLine << endl;
-        }
-    } else {
-        (*writeTo) << "##fileformat=VCFv4.2" << endl;
-    }
-    // Include proportions
-    for ( size_t ii = 0; ii < kStrain_; ii++){
-        (*writeTo) << "##Proportion of strain "
-                   << ( this->useVcf() ? this->vcfReaderPtr_->sampleName : "h" )
-                   << "." << (ii+1)
-                   << "=" << mcmcSample->proportion.back()[ii] << endl;
-    }
-
-    // HEADER
-    (*writeTo) << "#CHROM" << "\t"
-               << "POS"    << "\t"
-               << "ID"     << "\t"
-               << "REF"    << "\t"
-               << "ALT"    << "\t"
-               << "QUAL"   << "\t"
-               << "FILTER" << "\t"
-               << "INFO"   << "\t"
-               << "FORMAT" << "\t";
-    for ( size_t ii = 0; ii < kStrain_; ii++){
-        (*writeTo) << ( this->useVcf() ? this->vcfReaderPtr_->sampleName : "h" )
-                          << "." << (ii+1) ;
-        (*writeTo) << ((ii < (kStrain_-1)) ? "\t" : "\n") ;
-    }
-
-    size_t siteIndex = 0;
-    for ( size_t chromI = 0; chromI < chrom_.size(); chromI++ ){
-        for ( size_t posI = 0; posI < position_[chromI].size(); posI++){
-            if ( useVcf() ) {
-                (*writeTo) << this->vcfReaderPtr_->variants[siteIndex].chromStr  << "\t"
-                           << this->vcfReaderPtr_->variants[siteIndex].posStr    << "\t"
-                           << this->vcfReaderPtr_->variants[siteIndex].idStr     << "\t"
-                           << this->vcfReaderPtr_->variants[siteIndex].refStr    << "\t"
-                           << this->vcfReaderPtr_->variants[siteIndex].altStr    << "\t"
-                           << this->vcfReaderPtr_->variants[siteIndex].qualStr   << "\t"
-                           << this->vcfReaderPtr_->variants[siteIndex].filterStr << "\t"
-                           << this->vcfReaderPtr_->variants[siteIndex].infoStr   << "\t"
-                           << "GT"                                      << "\t";
-            } else {
-                (*writeTo) << chrom_[chromI]               << "\t"
-                           << (int)position_[chromI][posI] << "\t"
-                           << "."                          << "\t"
-                           << "."                          << "\t"
-                           << "."                          << "\t"
-                           << "."                          << "\t"
-                           << "."                          << "\t"
-                           << "."                          << "\t"
-                           << "GT"                         << "\t";
-            }
-
-            for ( size_t ii = 0; ii < mcmcSample->hap[siteIndex].size(); ii++){
-                (*writeTo) << mcmcSample->hap[siteIndex][ii];
-                (*writeTo) << ((ii < (mcmcSample->hap[siteIndex].size()-1)) ? "\t" : "\n") ;
-            }
-            siteIndex++;
-        }
-    }
-
-    assert ( siteIndex == mcmcSample->hap.size());
-    if ( compressVcf() ){
-        ogstreamExport.close();
-    } else {
-        ofstreamExportTmp.close();
-    }
-}

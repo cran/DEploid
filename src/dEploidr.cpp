@@ -2,7 +2,9 @@
  * dEploid is used for deconvoluting Plasmodium falciparum genome from
  * mix-infected patient sample.
  *
- * Copyright (C) 2016, Sha (Joe) Zhu, Jacob Almagro and Prof. Gil McVean
+ * Copyright (C) 2016-2017 University of Oxford
+ *
+ * Author: Sha (Joe) Zhu
  *
  * This file is part of dEploid.
  *
@@ -22,17 +24,13 @@
  */
 
 #include <Rcpp.h>
-
-#include <iostream>
-#include <fstream>
-#include <memory>
-
-#include "r_random_generator.h"
-
+#include <iostream> // std::cout
 #include "mcmc.hpp"
 #include "panel.hpp"
 #include "dEploidIO.hpp"
-#include "fastfunc.hpp"
+#include <memory>
+#include "r_random_generator.h"
+
 
 using namespace Rcpp;
 
@@ -129,10 +127,12 @@ class RMcmcSample {
 //' @export
 //'
 //' @examples
+//' \dontrun{
 //' vcfFile = system.file("extdata", "PG0390-C.test.vcf.gz", package = "DEploid")
 //' plafFile = system.file("extdata", "labStrains.test.PLAF.txt", package = "DEploid")
 //' set.seed(1234)
 //' PG0390.deconv = dEploid(paste("-vcf", vcfFile, "-plaf", plafFile, "-noPanel"))
+//' }
 //'
 // [[Rcpp::export]]
 List dEploid(std::string args) {
@@ -159,29 +159,26 @@ List dEploid(std::string args) {
     std::shared_ptr<FastFunc> ff = std::make_shared<FastFunc>();
     RRandomGenerator rrg(ff);
 
-    Panel *panel = NULL; // Move panel to dEploidIO
-
-    if ( dEploidIO.usePanel() ){
-        panel = new Panel();
-        panel->readFromFile(dEploidIO.panelFileName_.c_str());
-        if ( dEploidIO.excludeSites() ){
-            panel->findAndKeepMarkers( dEploidIO.excludedMarkers );
-        }
-
-        panel->computeRecombProbs( dEploidIO.averageCentimorganDistance(), dEploidIO.Ne(), dEploidIO.useConstRecomb(), dEploidIO.constRecombProb(), dEploidIO.forbidCopyFromSame() );
-        panel->checkForExceptions( dEploidIO.nLoci(), dEploidIO.panelFileName_ );
+    if ( dEploidIO.doPainting() ){
+        //dEploidIO.chromPainting();
+        stop("Painting is not implemented yet!");
     }
 
+    if (dEploidIO.useIBD()){ // ibd
+        McmcSample * ibdMcmcSample = new McmcSample();
+        McmcMachinery ibdMcmcMachinery(&dEploidIO, ibdMcmcSample, &rrg, true);
+        ibdMcmcMachinery.runMcmcChain(true, // show progress
+                                      true, // use IBD
+                                      false ); // not in R
+        delete ibdMcmcSample;
+    }
     McmcSample * mcmcSample = new McmcSample();
 
-    McmcMachinery mcmcMachinery(&dEploidIO, panel, mcmcSample, &rrg);
-    mcmcMachinery.runMcmcChain( false );
-
-    if ( panel ){
-        delete panel;
-    }
-    //rrg->clearFastFunc();
-    //delete rrg;
+    McmcMachinery mcmcMachinery(&dEploidIO, mcmcSample, &rrg,
+                                false); // use IBD
+    mcmcMachinery.runMcmcChain(true, // show progress
+                               false, // use IBD    RMcmcSample rMcmcSample(&dEploidIO, mcmcSample);
+                               false); // not in R
 
     RMcmcSample rMcmcSample(&dEploidIO, mcmcSample);
     /** Finalize */

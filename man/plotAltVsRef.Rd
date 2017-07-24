@@ -5,7 +5,8 @@
 \title{Plot coverage}
 \usage{
 plotAltVsRef(ref, alt, title = "Alt vs Ref", exclude.ref = c(),
-  exclude.alt = c())
+  exclude.alt = c(), potentialOutliers = c(), cex.lab = 1, cex.main = 1,
+  cex.axis = 1)
 }
 \arguments{
 \item{ref}{Numeric array of reference allele count.}
@@ -17,6 +18,14 @@ plotAltVsRef(ref, alt, title = "Alt vs Ref", exclude.ref = c(),
 \item{exclude.ref}{Numeric array of reference allele count at sites that are not deconvoluted.}
 
 \item{exclude.alt}{Numeric array of alternative allele count at sites that are not deconvoluted}
+
+\item{potentialOutliers}{Index of potential outliers.}
+
+\item{cex.lab}{Label size.}
+
+\item{cex.main}{Title size.}
+
+\item{cex.axis}{Axis text size.}
 }
 \description{
 Plot alternative allele count vs reference allele count at each site.
@@ -34,4 +43,3 @@ PG0390CoverageVcf = extractCoverageFromVcf(vcfFile)
 plotAltVsRef( PG0390CoverageVcf$refCount, PG0390CoverageVcf$altCount )
 
 }
-

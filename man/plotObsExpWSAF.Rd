@@ -4,7 +4,8 @@
 \alias{plotObsExpWSAF}
 \title{Plot WSAF}
 \usage{
-plotObsExpWSAF(obsWSAF, expWSAF, title = "WSAF(observed vs expected)")
+plotObsExpWSAF(obsWSAF, expWSAF, title = "WSAF(observed vs expected)",
+  cex.lab = 1, cex.main = 1, cex.axis = 1)
 }
 \arguments{
 \item{obsWSAF}{Numeric array of observed WSAF.}
@@ -12,11 +13,18 @@ plotObsExpWSAF(obsWSAF, expWSAF, title = "WSAF(observed vs expected)")
 \item{expWSAF}{Numeric array of expected WSAF.}
 
 \item{title}{Figure title.}
+
+\item{cex.lab}{Label size.}
+
+\item{cex.main}{Title size.}
+
+\item{cex.axis}{Axis text size.}
 }
 \description{
 Plot observed alternative allele frequency within sample against expected WSAF.
 }
 \examples{
+\dontrun{
 vcfFile = system.file("extdata", "PG0390-C.test.vcf.gz", package = "DEploid")
 PG0390CoverageVcf = extractCoverageFromVcf(vcfFile)
 obsWSAF = computeObsWSAF( PG0390CoverageVcf$altCount, PG0390CoverageVcf$refCount )
@@ -25,6 +33,6 @@ PG0390CoverageVcf.deconv = dEploid(paste("-vcf", vcfFile, "-plaf", plafFile, "-n
 prop = PG0390CoverageVcf.deconv$Proportions[dim(PG0390CoverageVcf.deconv$Proportions)[1],]
 expWSAF = t(PG0390CoverageVcf.deconv$Haps) \%*\% prop
 plotObsExpWSAF(obsWSAF, expWSAF)
-
 }
 
+}

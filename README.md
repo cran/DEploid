@@ -1,9 +1,11 @@
-<img src="extra/deploid.png" width="180">
+<img src="inst/extdata/deploid.png" width="180">
+
 [![License (GPL version 3)](https://img.shields.io/badge/license-GPL%20version%203-brightgreen.svg)](http://opensource.org/licenses/GPL-3.0)
 [![Build Status](https://travis-ci.org/mcveanlab/DEploid-r.svg?branch=master)](https://travis-ci.org/mcveanlab/DEploid-r)
 [![Build Status](https://ci.appveyor.com/api/projects/status/hi1nq97d5l68qs4r?svg=true)](https://ci.appveyor.com/project/shajoezhu/deploid-r)
-[![Coverage Status](https://coveralls.io/repos/github/mcveanlab/DEploid-r/badge.svg)](https://coveralls.io/github/mcveanlab/DEploid-r)
+[![Coverage Status](https://coveralls.io/repos/github/mcveanlab/DEploid-r/badge.svg?branch=master)](https://coveralls.io/github/mcveanlab/DEploid-r?branch=master)
 [![codecov](https://codecov.io/gh/mcveanlab/DEploid-r/branch/master/graph/badge.svg)](https://codecov.io/gh/mcveanlab/DEploid-r)
+[![CRAN RStudio Mirror Downloads](http://cranlogs.r-pkg.org/badges/DEploid)](https://cran.r-project.org/package=DEploid)
 
 DEploid R package -- Deconvolute Mixed Genomes with Unknown Proportions
 =================
@@ -14,13 +16,21 @@ Traditional ‘phasing’ programs are limited to diploid organisms. Our method 
 Installation
 ------------
 
-Please install `Rcpp` package first. From the `R`-console, type
+It is recommended to use the current CRAN version. It can be installed from within R using
+
+```R
+> install.packages('DEploid')
+```
+
+For the developing version, please install Rcpp package first. From the R-console, type
+
 ```R
 > install.packages("Rcpp")
 ```
 
-###Note:
-If you are using Windows, please install `Rtools` from [https://cran.r-project.org/bin/windows/Rtools/](`Rtools`), then
+(NOTE: If you are using Windows, please install `Rtools` from [https://cran.r-project.org/bin/windows/Rtools/](`Rtools`))
+
+then
 
 ```R
 > install.packages("devtools")
@@ -49,5 +59,5 @@ Citation
 
 If you use `dEploid` in your work, please cite the program:
 
-PLACEHOLDER FOR APP NOTE
+Zhu, J. S. J. A. Garcia G. McVean. (2017) Deconvoluting multiple infections in *Plasmodium falciparum* from high throughput sequencing data. *bioRxiv* 099499. doi: https://doi.org/10.1101/099499
 

@@ -118,9 +118,16 @@ extractPLAF <- function ( plafFileName ){
 #'
 #' @param title Figure title.
 #'
+#' @param cex.lab Label size.
+#'
+#' @param cex.main Title size.
+#'
+#' @param cex.axis Axis text size.
+#'
 #' @export
 #'
 #' @examples
+#' \dontrun{
 #' plafFile = system.file("extdata", "labStrains.test.PLAF.txt", package = "DEploid")
 #' panelFile = system.file("extdata", "labStrains.test.panel.txt", package = "DEploid")
 #' refFile = system.file("extdata", "PG0390-C.test.ref", package = "DEploid")
@@ -129,12 +136,15 @@ extractPLAF <- function ( plafFileName ){
 #' PG0390CoverageTxt.deconv = dEploid(paste("-ref", refFile, "-alt", altFile,
 #'     "-plaf", plafFile, "-noPanel"))
 #' plotProportions( PG0390CoverageTxt.deconv$Proportions, "PG0390-C proportions" )
+#' }
 #'
-plotProportions <- function (proportions, title = "Components"){
+plotProportions <- function (proportions, title = "Components",
+                       cex.lab = 1, cex.main = 1, cex.axis = 1 ){
     rainbowColorBin <- 16
     barplot(t(proportions), beside = F, border = NA,
         col = rainbow(rainbowColorBin), space = 0, xlab = "Iteration",
-        ylab = "Component proportion", main = title)
+        ylab = "Component proportion", main = title,
+        cex.lab = cex.lab, cex.main = cex.main, cex.axis = cex.axis)
 }
 
 
@@ -152,6 +162,14 @@ plotProportions <- function (proportions, title = "Components"){
 #'
 #' @param exclude.alt Numeric array of alternative allele count at sites that are not deconvoluted
 #'
+#' @param potentialOutliers Index of potential outliers.
+#'
+#' @param cex.lab Label size.
+#'
+#' @param cex.main Title size.
+#'
+#' @param cex.axis Axis text size.
+#'
 #' @export
 #'
 #' @examples
@@ -167,16 +185,32 @@ plotProportions <- function (proportions, title = "Components"){
 #' plotAltVsRef( PG0390CoverageVcf$refCount, PG0390CoverageVcf$altCount )
 #'
 plotAltVsRef <- function ( ref, alt, title = "Alt vs Ref",
-                    exclude.ref = c(), exclude.alt = c() ){
+                    exclude.ref = c(), exclude.alt = c(),
+                    potentialOutliers = c(), cex.lab = 1, cex.main = 1,
+                    cex.axis = 1 ){
+    cr <- colorRampPalette(colors = c("#de2d26", "#2b8cbe"))
+    colors <- cr(31)
+    ratios <- ref / (ref + alt + 0.0000001)
     tmpRange <- 1.1 * mean(max(alt), max(ref))
     plot ( ref, alt, xlim = c(0, tmpRange), ylim = c(0, tmpRange),
-        cex = 0.5, xlab = "REF", ylab = "ALT", main = title)
-    points (exclude.ref, exclude.alt, col = "red")
+        pch = 20, col = scales::alpha(colors[ceiling(ratios * 30) + 1], 0.7),
+        xlab = "Reference # Reads", ylab = "Alternative # Reads", main = title,
+        cex = 0.5, cex.lab = cex.lab, cex.main = cex.main, cex.axis = cex.axis)
+    legend("topright", legend = c("100% Alt", "100% Ref", "50/50"),
+        fill = colors[c(1, 31, 15)], cex = cex.lab, border = NA, box.lwd = 0,
+        box.col = "white", bg = NA)
+    abline(a = 0, b = 1, lwd = 2, lty = 2, col = "gray")
+    points(exclude.ref, exclude.alt, col = "red")
     abline(v = 50, untf = FALSE, lty = 2)
     abline(h = 50, untf = FALSE, lty = 2)
 
     abline(h = 150, untf = FALSE, lty = 2)
     abline(v = 150, untf = FALSE, lty = 2)
+
+    if ( length(potentialOutliers) > 0 ){
+        points(ref[potentialOutliers], alt[potentialOutliers], col = "black",
+               pch = "x", cex = 2)
+    }
 }
 
 
@@ -189,6 +223,12 @@ plotAltVsRef <- function ( ref, alt, title = "Alt vs Ref",
 #' @param exclusive When TRUE 0 < WSAF < 1; otherwise 0 <= WSAF <= 1.
 #'
 #' @param title Histogram title
+#'
+#' @param cex.lab Label size.
+#'
+#' @param cex.main Title size.
+#'
+#' @param cex.axis Axis text size.
 #'
 #' @return histogram
 #'
@@ -211,13 +251,15 @@ plotAltVsRef <- function ( ref, alt, title = "Alt vs Ref",
 #' myhist = histWSAF(obsWSAF, FALSE)
 #'
 histWSAF <- function ( obsWSAF, exclusive = TRUE,
-                title ="Histogram 0<WSAF<1" ){
+                title ="Histogram 0<WSAF<1",
+                cex.lab = 1, cex.main = 1, cex.axis = 1 ){
     tmpWSAFIndex <- 1:length(obsWSAF)
     if ( exclusive ){
         tmpWSAFIndex <- which( ( (obsWSAF < 1) * (obsWSAF > 0) ) == 1)
     }
     return (hist(obsWSAF[tmpWSAFIndex], main = title,
-        breaks = seq(0, 1, by = 0.1), xlab = "WSAF"))
+        breaks = seq(0, 1, by = 0.1), xlab = "WSAF", col = "gray",
+        cex.lab = cex.lab, cex.main = cex.main, cex.axis = cex.axis))
 }
 
 
@@ -233,6 +275,14 @@ histWSAF <- function ( obsWSAF, exclusive = TRUE,
 #' @param expWSAF Numeric array of expected WSAF from model.
 #'
 #' @param title Figure title, "WSAF vs PLAF" by default
+#'
+#' @param potentialOutliers Index of potential outliers.
+#'
+#' @param cex.lab Label size.
+#'
+#' @param cex.main Title size.
+#'
+#' @param cex.axis Axis text size.
 #'
 #' @export
 #'
@@ -255,11 +305,17 @@ histWSAF <- function ( obsWSAF, exclusive = TRUE,
 #' plotWSAFvsPLAF(plaf, obsWSAF)
 #'
 plotWSAFvsPLAF <- function ( plaf, obsWSAF, expWSAF = c(),
-                         title = "WSAF vs PLAF" ){
+                      potentialOutliers = c(), title = "WSAF vs PLAF",
+                      cex.lab = 1, cex.main = 1, cex.axis = 1 ){
     plot ( plaf, obsWSAF, cex = 0.5, xlim = c(0, 1), ylim = c(0, 1),
-        col = "red", main = title, xlab = "PLAF", ylab = "WSAF" )
+        col = "red", main = title, xlab = "PLAF", ylab = "WSAF",
+        cex.lab = cex.lab, cex.main = cex.main, cex.axis = cex.axis)
     if ( length(expWSAF) > 0 ){
         points ( plaf, expWSAF, cex = 0.5, col = "blue")
+    }
+    if ( length(potentialOutliers) > 0 ){
+        points(plaf[potentialOutliers], obsWSAF[potentialOutliers],
+        col = "black", pch = "x", cex = 2)
     }
 }
 
@@ -275,9 +331,16 @@ plotWSAFvsPLAF <- function ( plaf, obsWSAF, expWSAF = c(),
 #'
 #' @param title Figure title.
 #'
+#' @param cex.lab Label size.
+#'
+#' @param cex.main Title size.
+#'
+#' @param cex.axis Axis text size.
+#'
 #' @export
 #'
 #' @examples
+#' \dontrun{
 #' vcfFile = system.file("extdata", "PG0390-C.test.vcf.gz", package = "DEploid")
 #' PG0390CoverageVcf = extractCoverageFromVcf(vcfFile)
 #' obsWSAF = computeObsWSAF( PG0390CoverageVcf$altCount, PG0390CoverageVcf$refCount )
@@ -286,14 +349,16 @@ plotWSAFvsPLAF <- function ( plaf, obsWSAF, expWSAF = c(),
 #' prop = PG0390CoverageVcf.deconv$Proportions[dim(PG0390CoverageVcf.deconv$Proportions)[1],]
 #' expWSAF = t(PG0390CoverageVcf.deconv$Haps) %*% prop
 #' plotObsExpWSAF(obsWSAF, expWSAF)
+#' }
 #'
 plotObsExpWSAF <- function (obsWSAF, expWSAF,
-                      title = "WSAF(observed vs expected)"){
+                      title = "WSAF(observed vs expected)",
+                      cex.lab = 1, cex.main = 1, cex.axis = 1 ){
     plot(obsWSAF, expWSAF, pch = 19, col = "blue",
         xlab = "Observed WSAF (ALT/(ALT+REF))", ylab = "Expected WSAF (h%*%p)",
-        main = title, xlim = c(-0.05, 1.05), cex = 0.5, ylim = c(-0.05, 1.05));
+        main = title, xlim = c(-0.05, 1.05), cex = 0.5, ylim = c(-0.05, 1.05),
+        cex.lab = cex.lab, cex.main = cex.main, cex.axis = cex.axis)
     abline(0, 1, lty = "dotted");
-
 }
 
 
@@ -336,11 +401,30 @@ computeObsWSAF <- function (alt, ref) {
 #'
 #' @param title Figure title.
 #'
+#' @param labelScaling Scaling parameter for plotting.
+#'
+#' @param numberOfInbreeding Number of inbreeding strains copying from.
+#'
 #' @export
 #'
-haplotypePainter <- function (posteriorProbabilities, title = ""){
+haplotypePainter <- function (posteriorProbabilities, title = "", labelScaling,
+                        numberOfInbreeding = 0){
     rainbowColorBin <- 16
+    rainbowColors <- rainbow(rainbowColorBin)
+    if ( numberOfInbreeding > 0 ){
+        panelSize <- dim(posteriorProbabilities)[2] - numberOfInbreeding
+        rainbowColors <- c(rep("#46a8e1", panelSize),
+                           rep("#f34747", numberOfInbreeding))
+    }
     barplot(t(posteriorProbabilities), beside = F, border = NA,
-        col = rainbow(rainbowColorBin), space = 0, xlab = "SNP index",
-        ylab = "Posterior probabilities", main = title)
+        col = rainbowColors, space = 0, xlab = "SNP index",
+        ylab = "", main = title, cex.axis = labelScaling / 5,
+        cex.lab = labelScaling / 6, cex.main = labelScaling / 5,
+        xaxt = "n", yaxt = "n")
+    newXaxt <- round(seq(1, dim(posteriorProbabilities)[1], length.out = 6))
+    axis(1, at = newXaxt, labels = as.character(newXaxt),
+        cex.axis = labelScaling / 7)
+    newYaxt <- seq(0, 1, length.out = 3)
+    axis(2, at = newYaxt, labels = as.character(newYaxt),
+        cex.axis = labelScaling / 7)
 }

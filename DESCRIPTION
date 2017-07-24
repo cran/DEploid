@@ -1,7 +1,7 @@
 Package: DEploid
 Type: Package
 Title: Deconvolute Mixed Genomes with Unknown Proportions
-Version: 0.3.2
+Version: 0.4.1
 Authors@R: c(
     person("Joe", "Zhu", role=c("aut", "cre", "cph"), email="joe.zhu@well.ox.ac.uk")
     )
@@ -19,16 +19,16 @@ URL: https://github.com/mcveanlab/DEploid-r
 BugReports: https://github.com/mcveanlab/DEploid-r/issues
 License: GPL (>= 3)
 Depends: R (>= 3.1.0)
-Imports: Rcpp (>= 0.11.2)
+Imports: Rcpp (>= 0.11.2), scales (>= 0.4.0)
 Suggests: knitr, rmarkdown, testthat (>= 0.9.0)
 SystemRequirements: C++11
 VignetteBuilder: knitr
 LinkingTo: Rcpp
-RoxygenNote: 5.0.1
-Date: 2016-11-25
+RoxygenNote: 6.0.1
+Date: 2017-07-19
 NeedsCompilation: yes
-Packaged: 2016-11-25 13:28:06 UTC; joezhu
+Packaged: 2017-07-24 16:21:48 UTC; joezhu
 Author: Joe Zhu [aut, cre, cph]
 Maintainer: Joe Zhu <joe.zhu@well.ox.ac.uk>
 Repository: CRAN
-Date/Publication: 2016-11-25 19:47:49
+Date/Publication: 2017-07-24 19:21:48 UTC
