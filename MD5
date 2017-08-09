@@ -1,4 +1,4 @@
-46742ec58721888c70275d6469d6078d *DESCRIPTION
+fe25858d173d799b7791b1fbe643d5f7 *DESCRIPTION
 d7f3808fb8f81f4820023f8f3ff6d73f *NAMESPACE
 3f730ab29544fc1d63946a50242f3a42 *R/DEploidR.R
 7efdf7afe8931c93c9c3cdf32a85fb6b *R/RcppExports.R
@@ -9,7 +9,7 @@ db8dd67bf1ee95720e0b4deeefe17540 *README.md
 461e2dc267742100128d50cd74e757e2 *inst/CITATION
 01c90976b229646ca9b46399709688e3 *inst/doc/dEploid-Arguments.R
 2cbf6a6a60e07984981e6a2329578f8e *inst/doc/dEploid-Arguments.Rmd
-4935990431d274f3f06d615e4246f241 *inst/doc/dEploid-Arguments.html
+7ad5bd544e465ca7736c57e0bde7815d *inst/doc/dEploid-Arguments.html
 2cad08193815864d8a26f8ac768ef199 *inst/extdata/PG0390-C.test.alt
 07eccfaeb952de9e0460bcc12d457b22 *inst/extdata/PG0390-C.test.ref
 cdc601c1d8d4eec2bc80512eb8ee6b6b *inst/extdata/PG0390-C.test.vcf.gz
@@ -71,7 +71,7 @@ ade409024dc2511702be4b25cec98304 *src/DEploid/gzstream/test_gzip.C
 667c569a5d455053fccbd853ba195eab *src/DEploid/gzstream/version
 1fcb7a50f57a3badf4ddade692ca443a *src/DEploid/ibd.cpp
 0029702d7be9123f533a0ce26c9682ac *src/DEploid/ibd.hpp
-a9f945dcbbc9dee68835b1cd84cd884c *src/DEploid/mcmc.cpp
+2b1ee219c92cc8dd7a6b4fbdc7b63e7b *src/DEploid/mcmc.cpp
 ea74b841d17de058b166907135a439bf *src/DEploid/mcmc.hpp
 3a6972a6e817a2a722dc2d3ab688f68c *src/DEploid/panel.cpp
 3721743b908e1121992fa6d681becefc *src/DEploid/panel.hpp
@@ -99,7 +99,7 @@ c5cc16e00e5cd1b8150a274c1fcfd3ad *src/init.c
 d9780788cb9e10ae63d0cfb4ce81703d *src/r_random_generator.h
 eedb9b59a5a966b63e9e82308caf7349 *src/test_exports.cpp
 e095660d571c0f3ef91ce1211ecb7f76 *tests/testthat.R
-ad40c582c1419214bedab79553a6f980 *tests/testthat/test-DEploid_tools.R
+3982e688fb6c251a018d4616267f493a *tests/testthat/test-DEploid_tools.R
 e6096201933e4b6042e165bca5d80db7 *tests/testthat/test-dEploid.R
 f66b335af2d854e56592824fc8df7a0a *tests/testthat/test-r_random-generator.R
 2cbf6a6a60e07984981e6a2329578f8e *vignettes/dEploid-Arguments.Rmd
