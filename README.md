@@ -1,10 +1,10 @@
 <img src="inst/extdata/deploid.png" width="180">
 
 [![License (GPL version 3)](https://img.shields.io/badge/license-GPL%20version%203-brightgreen.svg)](http://opensource.org/licenses/GPL-3.0)
-[![Build Status](https://travis-ci.org/mcveanlab/DEploid-r.svg?branch=master)](https://travis-ci.org/mcveanlab/DEploid-r)
+[![Build Status](https://travis-ci.org/DEploid-dev/DEploid-r.svg?branch=master)](https://travis-ci.org/DEploid-dev/DEploid-r)
 [![Build Status](https://ci.appveyor.com/api/projects/status/hi1nq97d5l68qs4r?svg=true)](https://ci.appveyor.com/project/shajoezhu/deploid-r)
-[![Coverage Status](https://coveralls.io/repos/github/mcveanlab/DEploid-r/badge.svg?branch=master)](https://coveralls.io/github/mcveanlab/DEploid-r?branch=master)
-[![codecov](https://codecov.io/gh/mcveanlab/DEploid-r/branch/master/graph/badge.svg)](https://codecov.io/gh/mcveanlab/DEploid-r)
+[![Coverage Status](https://coveralls.io/repos/github/DEploid-dev/DEploid-r/badge.svg?branch=master)](https://coveralls.io/github/DEploid-dev/DEploid-r?branch=master)
+[![codecov](https://codecov.io/gh/DEploid-dev/DEploid-r/branch/master/graph/badge.svg)](https://codecov.io/gh/DEploid-dev/DEploid-r)
 [![CRAN RStudio Mirror Downloads](http://cranlogs.r-pkg.org/badges/DEploid)](https://cran.r-project.org/package=DEploid)
 
 DEploid R package -- Deconvolute Mixed Genomes with Unknown Proportions
@@ -56,6 +56,10 @@ You can freely use all code in this project under the conditions of the GNU GPL 
 
 Citation
 --------
+
+If you use `dEploid` with the flag `-ibd`, please cite the following paper:
+
+Zhu, J. S., J. A. Hendry, J. Almagro-Garcia, R. D. Pearson, R. Amato, A. Miles, D. J. Weiss, T. C. D. Lucas, M. Nguyen, P. W. Gething, D. Kwiatkowski, G. McVean, and for the Pf3k Project. (2018) The origins and relatedness structure of mixed infections vary with local prevalence of *P. falciparum* malaria. *biorxiv*, doi: https://doi.org/10.1101/387266.
 
 If you use `dEploid` in your work, please cite the program:
 

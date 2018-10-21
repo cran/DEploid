@@ -1,9 +1,9 @@
 Package: DEploid
 Type: Package
 Title: Deconvolute Mixed Genomes with Unknown Proportions
-Version: 0.5.0
+Version: 0.5.1
 Authors@R: c(
-    person("Joe", "Zhu", role=c("aut", "cre", "cph"), email="joe.zhu@well.ox.ac.uk"),
+    person("Joe", "Zhu", role=c("aut", "cre", "cph"), email="joe.zhu@bdi.ox.ac.uk"),
     person('Jacob', 'Almagro-Garcia', role=c('aut', 'cph')),
     person('Gil', 'McVean', role=c('aut', 'cph')),
     person('University of Oxford', '', role=c('cph')),
@@ -33,9 +33,9 @@ SystemRequirements: C++11
 VignetteBuilder: knitr
 LinkingTo: Rcpp
 RoxygenNote: 6.0.1
-Date: 2018-05-18
+Date: 2018-10-20
 NeedsCompilation: yes
-Packaged: 2018-05-18 00:48:15 UTC; joezhu
+Packaged: 2018-10-21 09:35:55 UTC; joezhu
 Author: Joe Zhu [aut, cre, cph],
   Jacob Almagro-Garcia [aut, cph],
   Gil McVean [aut, cph],
@@ -44,6 +44,6 @@ Author: Joe Zhu [aut, cre, cph],
   CodeCogs Zyba Ltd [com, cph],
   Deepak Bandyopadhyay [com, cph],
   Lutz Kettner [com, cph]
-Maintainer: Joe Zhu <joe.zhu@well.ox.ac.uk>
+Maintainer: Joe Zhu <joe.zhu@bdi.ox.ac.uk>
 Repository: CRAN
-Date/Publication: 2018-05-18 03:28:52 UTC
+Date/Publication: 2018-10-21 15:40:05 UTC
