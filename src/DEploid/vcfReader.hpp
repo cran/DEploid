@@ -75,9 +75,19 @@ struct VcfCoverageFieldNotFound : public VcfInvalidVariantEntry{
 };
 
 
+struct VcfVQSLODNotFound : public VcfInvalidVariantEntry{
+    explicit VcfVQSLODNotFound(string str):VcfInvalidVariantEntry(str) {
+        this->reason = "VQSLOD was note found, check: ";
+        throwMsg = this->reason + this->src;
+    }
+    ~VcfVQSLODNotFound() throw() {}
+};
+
+
 class VariantLine{
   friend class VcfReader;
   friend class DEploidIO;
+
  public:
     explicit VariantLine(string tmpLine);
     ~VariantLine() {}
@@ -116,6 +126,7 @@ class VariantLine{
 
     int ref;
     int alt;
+    double vqslod;
 };
 
 
@@ -131,12 +142,17 @@ class VcfReader : public VariantIndex {
     explicit VcfReader(string fileName);  // parse in exclude sites
     ~VcfReader() {}
 
+    // Members and Methods
+    vector <string> headerLines;  // calling from python, need to be public
+    vector <double> refCount;  // calling from python, need to be public
+    vector <double> altCount;  // calling from python, need to be public
+    vector <double> vqslod;  // calling from python, need to be public
+    void finalize();  // calling from python, need to be public
+
  private:
     vector <VariantLine> variants;
     vector <VariantLine> keptVariants;
-    vector <double> refCount;
-    vector <double> altCount;
-    vector <string> headerLines;
+    vector <size_t> legitVqslodAt;
     string fileName_;
     ifstream inFile;
     igzstream inFileGz;
@@ -151,10 +167,11 @@ class VcfReader : public VariantIndex {
 
     // Methods
     void init(string fileName);
-    void finalize();
     void readVariants();
     void readHeader();
     void checkFeilds();
+    void findLegitSnpsGivenVQSLOD(double vqslodThreshold);
+    void findLegitSnpsGivenVQSLODHalf(double vqslodThreshold);
 
     void getChromList();
     void removeMarkers();

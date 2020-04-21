@@ -1,9 +1,9 @@
 Package: DEploid
 Type: Package
 Title: Deconvolute Mixed Genomes with Unknown Proportions
-Version: 0.5.2
+Version: 0.5.3
 Authors@R: c(
-    person("Joe", "Zhu", role=c("aut", "cre", "cph"), email="joe.zhu@bdi.ox.ac.uk"),
+    person("Joe", "Zhu", role=c("aut", "cre", "cph"), email="sha.joe.zhu@gmail.com"),
     person('Jacob', 'Almagro-Garcia', role=c('aut', 'cph')),
     person('Gil', 'McVean', role=c('aut', 'cph')),
     person('University of Oxford', '', role=c('cph')),
@@ -22,8 +22,8 @@ Description: Traditional phasing programs are limited to diploid organisms.
  patient blood sample, which often contains more than one parasite strain, with
  unknown proportions. This package is used for deconvoluting mixed haplotypes,
  and reporting the mixture proportions from each sample.
-URL: https://github.com/mcveanlab/DEploid-r
-BugReports: https://github.com/mcveanlab/DEploid-r/issues
+URL: https://github.com/DEploid-dev/DEploid-r
+BugReports: https://github.com/DEploid-dev/DEploid-r/issues
 License: GPL (>= 3)
 Depends: R (>= 3.1.0)
 Imports: Rcpp (>= 0.11.2), scales (>= 0.4.0), plotly (>= 4.7.1),
@@ -32,10 +32,10 @@ Suggests: knitr, testthat (>= 0.9.0)
 SystemRequirements: C++11
 VignetteBuilder: knitr
 LinkingTo: Rcpp
-RoxygenNote: 6.0.1
-Date: 2018-10-23
+RoxygenNote: 7.1.0
+Date: 2020-04-21
 NeedsCompilation: yes
-Packaged: 2018-10-23 13:59:50 UTC; joezhu
+Packaged: 2020-04-21 19:54:46 UTC; joezhu
 Author: Joe Zhu [aut, cre, cph],
   Jacob Almagro-Garcia [aut, cph],
   Gil McVean [aut, cph],
@@ -44,6 +44,6 @@ Author: Joe Zhu [aut, cre, cph],
   CodeCogs Zyba Ltd [com, cph],
   Deepak Bandyopadhyay [com, cph],
   Lutz Kettner [com, cph]
-Maintainer: Joe Zhu <joe.zhu@bdi.ox.ac.uk>
+Maintainer: Joe Zhu <sha.joe.zhu@gmail.com>
 Repository: CRAN
-Date/Publication: 2018-10-23 16:50:07 UTC
+Date/Publication: 2020-04-21 22:20:03 UTC

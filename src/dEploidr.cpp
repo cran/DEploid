@@ -28,6 +28,7 @@
 #include "mcmc.hpp"
 //#include "panel.hpp"
 #include "dEploidIO.hpp"
+#include "vcfReader.hpp"
 #include <memory>
 #include "r_random_generator.h"
 #include "lasso/dEploidLasso.hpp"
@@ -185,7 +186,11 @@ List dEploid(std::string args) {
                                        &dEploidIO.altCount_,
                                        dEploidIO.panel,
                                        &dEploidIO,
-                                       ibdMcmcSample, &rrg, true);
+                                       "DEploid-IBD",
+                                       "ibd",
+                                       ibdMcmcSample,
+                                       &rrg,
+                                       true);
         ibdMcmcMachinery.runMcmcChain(true, // show progress
                                       true, // use IBD
                                       false ); // not in R
@@ -198,8 +203,12 @@ List dEploid(std::string args) {
                                &dEploidIO.altCount_,
                                dEploidIO.panel,
                                &dEploidIO,
-                               mcmcSample, &rrg,
-                                false); // use IBD
+                               "DEploid classic version",
+                               "classic",  // brief
+                               mcmcSample,
+                               &rrg,
+                               false); // use IBD
+
     mcmcMachinery.runMcmcChain(true, // show progress
                                false, // use IBD    RMcmcSample rMcmcSample(&dEploidIO, mcmcSample);
                                false); // not in R
