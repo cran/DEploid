@@ -1,12 +1,13 @@
 /*
  * dEploid is used for deconvoluting Plasmodium falciparum genome from
- * mix-infected patient sample.
+ * mix-infected patient sample. DEploid-vcf-lib is a submodule for
+ * reading the vcf files and reference panel.
  *
- * Copyright (C) 2016-2017 University of Oxford
+ * Copyright (C) 2018 University of Oxford
  *
  * Author: Sha (Joe) Zhu
  *
- * This file is part of dEploid.
+ * This file is part of DEploid-vcf-lib.
  *
  * dEploid is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -23,13 +24,17 @@
  *
  */
 
-#include <iostream>      // std::cout
-#include "global.hpp"
+#include <iostream>  // std::cout
 #include "vcfReader.hpp"
 
-using namespace std;
-
-bool VcfReader::printSampleName(){
-    dout << "Sample name is " << this->sampleName_ << endl;
-    return true;
+int main(int argc, char *argv[]) {
+    try {
+     VcfReader vcfReader(argv[1], "PG0390-C");
+//        vcfReader.printSampleName();
+        return EXIT_SUCCESS;
+    }
+    catch (const exception &e) {
+        std::cerr << "Error: " << e.what() << std::endl;
+        return EXIT_FAILURE;
+    }
 }

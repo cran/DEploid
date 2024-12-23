@@ -1,7 +1,7 @@
 Package: DEploid
 Type: Package
 Title: Deconvolute Mixed Genomes with Unknown Proportions
-Version: 0.5.4
+Version: 0.5.6
 Authors@R: c(
     person("Joe", "Zhu", role=c("aut", "cre", "cph"), email="sha.joe.zhu@gmail.com"),
     person('Jacob', 'Almagro-Garcia', role=c('aut')),
@@ -25,7 +25,7 @@ Description: Traditional phasing programs are limited to diploid organisms.
 URL: https://github.com/DEploid-dev/DEploid-r
 BugReports: https://github.com/DEploid-dev/DEploid-r/issues
 License: GPL (>= 3)
-Depends: R (>= 3.1.0)
+Depends: R (>= 3.1.0), DEploid.utils (>= 0.0.1)
 Imports: Rcpp (>= 0.11.2), scales (>= 0.4.0), plotly (>= 4.7.1),
         magrittr (>= 1.5), rmarkdown(>= 1.6), htmlwidgets (>= 1.0)
 Suggests: knitr, testthat (>= 0.9.0)
@@ -33,9 +33,9 @@ VignetteBuilder: knitr
 LinkingTo: Rcpp
 RoxygenNote: 7.3.2
 Encoding: UTF-8
-Date: 2024-10-8
+Date: 2024-12-22
 NeedsCompilation: yes
-Packaged: 2024-10-14 01:00:48 UTC; rstudio
+Packaged: 2024-12-22 01:02:58 UTC; rstudio
 Author: Joe Zhu [aut, cre, cph],
   Jacob Almagro-Garcia [aut],
   Gil McVean [aut],
@@ -46,4 +46,4 @@ Author: Joe Zhu [aut, cre, cph],
   Lutz Kettner [com, cph]
 Maintainer: Joe Zhu <sha.joe.zhu@gmail.com>
 Repository: CRAN
-Date/Publication: 2024-10-14 08:40:02 UTC
+Date/Publication: 2024-12-23 15:30:15 UTC
