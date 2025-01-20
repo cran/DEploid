@@ -1,9 +1,10 @@
 Package: DEploid
 Type: Package
 Title: Deconvolute Mixed Genomes with Unknown Proportions
-Version: 0.5.6
+Version: 0.5.7
 Authors@R: c(
-    person("Joe", "Zhu", role=c("aut", "cre", "cph"), email="sha.joe.zhu@gmail.com"),
+    person("Joe", "Zhu", , "sha.joe.zhu@gmail.com", role = c("aut", "cre"),
+           comment = c(ORCID = "0000-0001-7566-2787")),
     person('Jacob', 'Almagro-Garcia', role=c('aut')),
     person('Gil', 'McVean', role=c('aut')),
     person('University of Oxford', '', role=c('cph')),
@@ -35,8 +36,8 @@ RoxygenNote: 7.3.2
 Encoding: UTF-8
 Date: 2024-12-22
 NeedsCompilation: yes
-Packaged: 2024-12-22 01:02:58 UTC; rstudio
-Author: Joe Zhu [aut, cre, cph],
+Packaged: 2025-01-20 02:29:18 UTC; rstudio
+Author: Joe Zhu [aut, cre] (<https://orcid.org/0000-0001-7566-2787>),
   Jacob Almagro-Garcia [aut],
   Gil McVean [aut],
   University of Oxford [cph],
@@ -46,4 +47,4 @@ Author: Joe Zhu [aut, cre, cph],
   Lutz Kettner [com, cph]
 Maintainer: Joe Zhu <sha.joe.zhu@gmail.com>
 Repository: CRAN
-Date/Publication: 2024-12-23 15:30:15 UTC
+Date/Publication: 2025-01-20 03:20:02 UTC
